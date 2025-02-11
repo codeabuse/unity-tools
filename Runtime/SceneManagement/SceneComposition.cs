@@ -17,7 +17,7 @@ namespace Codeabuse.SceneManagement
         {
             if (_scenes.Length == 0)
             {
-                Debug.LogError("No scenes!");
+                Debug.LogError($"Scene composition '{name}' contains no scenes", this);
                 return;
             }
 
