@@ -31,7 +31,7 @@ namespace Codeabuse.SceneManagement
         private void OnEnable()
         {
 #if INPUT_SYSTEM_ENABLED
-            if (_resetSceneSetup.action is null)
+            if (_resetAction.action is null)
                 return;
             _resetAction.action.Enable();
             
