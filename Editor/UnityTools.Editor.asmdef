@@ -1,22 +1,18 @@
 {
-    "name": "ApplicationCore.Runtime",
+    "name": "UnityTools.Editor",
     "rootNamespace": "",
     "references": [
-        "Unity.InputSystem"
+        "GUID:632da66c4f63aca4caa6395de878d752"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [
-        {
-            "name": "com.unity.inputsystem",
-            "expression": "",
-            "define": "INPUT_SYSTEM_ENABLED"
-        }
-    ],
+    "versionDefines": [],
     "noEngineReferences": false
 }
