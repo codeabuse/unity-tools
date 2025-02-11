@@ -15,7 +15,7 @@
     "versionDefines": [
         {
             "name": "com.cysharp.unitask",
-            "expression": "",
+            "expression": "2.5.5",
             "define": "UNITASK_ENABLED"
         }
     ],
