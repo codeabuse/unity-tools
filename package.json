@@ -9,7 +9,7 @@
   "licensesUrl": "https://www.gnu.org/licenses/gpl-3.0.en.html",
   "dependencies": {
     "com.unity.inputsystem": "1.7.0",
-    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask"
+    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask#2.5.10"
  },
  "keywords": [
     "unity",
