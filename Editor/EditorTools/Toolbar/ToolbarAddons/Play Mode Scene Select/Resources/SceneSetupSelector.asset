@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5910f27770734930aa6ec2bfee4793c7, type: 3}
+  m_Name: SceneSetupSelector
+  m_EditorClassIdentifier: 
+  _visualTree: {fileID: 9197481963319205126, guid: 5383dd63209e42cca4f1d46c0b503727, type: 3}
+  _styles: {fileID: 7433441132597879392, guid: f4cc632e6e4544c28fec4de50cdec358, type: 3}
+  _toolbarArea: 1
+  _priority: 0
+  _toolbarAddonBehaviour:
+    rid: 8761364104857518082
+  references:
+    version: 2
+    RefIds:
+    - rid: 8761364104857518082
+      type: {class: PlayModeSceneSelectAddon, ns: Codeabuse.EditorTools, asm: ApplicationCore.Editor}
+      data: 

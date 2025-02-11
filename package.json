@@ -1,0 +1,24 @@
+{
+  "name": "net.codeabuse.unity-tools",
+  "version": "1.0.0",
+  "displayName": "Unity Tools",
+  "description": "Tools and extensions for Unity Editor and application runtime",
+  "unity": "2022.3",
+  "documentationUrl": "https://example.com/",
+  "changelogUrl": "https://github.com/codeabuse/unity-tools",
+  "licensesUrl": "https://www.gnu.org/licenses/gpl-3.0.en.html",
+  "dependencies": {
+    "com.unity.inputsystem": "1.7.0",
+    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask#"
+ },
+ "keywords": [
+    "unity",
+    "tools",
+    "editor"
+  ],
+  "author": {
+    "name": "codeabuse",
+    "email": "aldeminor@gmail.com",
+    "url": "https://github.com/codeabuse"
+  }
+}
