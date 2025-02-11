@@ -17,10 +17,10 @@ MonoBehaviour:
   _toolbarArea: 1
   _priority: 0
   _toolbarAddonBehaviour:
-    rid: 8761364104857518082
+    rid: 8761364106014097408
   references:
     version: 2
     RefIds:
-    - rid: 8761364104857518082
-      type: {class: PlayModeSceneSelectAddon, ns: Codeabuse.EditorTools, asm: ApplicationCore.Editor}
+    - rid: 8761364106014097408
+      type: {class: PlayModeSceneSelectAddon, ns: Codeabuse.EditorTools, asm: UnityTools.Editor}
       data: 
