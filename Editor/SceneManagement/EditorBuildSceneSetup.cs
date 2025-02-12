@@ -3,7 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 
-namespace Codeabuse.EditorTools
+namespace Codeabuse.SceneManagement
 {
     public class EditorBuildSceneSetup : ISceneSetup, IEquatable<EditorBuildSceneSetup>
     {
