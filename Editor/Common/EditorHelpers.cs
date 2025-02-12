@@ -12,9 +12,9 @@ namespace Codeabuse
         {
             if (string.IsNullOrEmpty(path))
                 return false;
-            
-            if (!path.StartsWith("Assets"))
-                return false;
+
+            if (!path.StartsWith("Assets/"))
+                path = "Assets/" + path;
             
             if (AssetDatabase.IsValidFolder(path)) 
                 return true;
@@ -34,8 +34,8 @@ namespace Codeabuse
                 if (AssetDatabase.IsValidFolder(childPath.ToString()))
                     continue;
                 parent = parentPath.Remove(parentPath.Length -1, 1).ToString();
-                Debug.Log($"Trying to create folder '{child}' at '{parent}'");
                 AssetDatabase.CreateFolder(parent, child);
+                Debug.Log($"Folder created: {parentPath}{child}");
             }
 
             return true;
