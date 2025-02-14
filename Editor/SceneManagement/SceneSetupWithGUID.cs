@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -24,6 +25,21 @@ namespace Codeabuse.EditorTools
             {
                 this._guid = guid.ToString();
             }
+        }
+
+        public bool IsBuildScene(out EditorBuildSettingsScene ebss, out int index)
+        {
+            for (var i = 0; i < EditorBuildSettings.scenes.Length; i++)
+            {
+                ebss = EditorBuildSettings.scenes[i];
+                if (ebss.path != this.path) continue;
+                index = i;
+                return true;
+            }
+
+            index = -1;
+            ebss = null;
+            return false;
         }
 
         public void UpdateGUID()
