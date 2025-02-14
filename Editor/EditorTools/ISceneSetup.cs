@@ -1,4 +1,6 @@
-﻿namespace Codeabuse
+﻿using UnityEngine;
+
+namespace Codeabuse
 {
     /// <summary>
     /// Represents scene or multiple scenes in Editor.
@@ -9,5 +11,10 @@
         int Id { get; }
         void Load();
         void Save();
+        /// <summary>
+        /// Get Scene asset or Scene Setup asset.
+        /// </summary>
+        /// <returns></returns>
+        Object GetUnderlyingObject();
     }
 }

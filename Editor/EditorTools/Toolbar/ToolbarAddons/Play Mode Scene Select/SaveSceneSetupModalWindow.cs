@@ -11,7 +11,10 @@ namespace Codeabuse.EditorTools
         private VisualElement _scenesRoot;
         private TextField _setupNameField;
 
-        public event Action<Option<string>> OnSaveConfirmed;
+        /// <summary>
+        /// <returns>A a user submitted name for the saved setup, or None if cancelled. </returns>
+        /// </summary>
+        public event Action<Option<string>> OnSaveDialogClosed;
 
         public void ShowLoadedScenes(IEnumerable<string> sceneNames)
         {
@@ -26,6 +29,11 @@ namespace Codeabuse.EditorTools
         {
             this.minSize = maxSize = new( 550, 400 );
             this.name = "Save current scenes setup";
+        }
+
+        private void OnDisable()
+        {
+            OnSaveDialogClosed = null;
         }
 
         private void CreateGUI()
@@ -90,13 +98,13 @@ namespace Codeabuse.EditorTools
                 return;
             }
             
-            OnSaveConfirmed?.Invoke(setupName);
+            OnSaveDialogClosed?.Invoke(setupName);
             this.Close();
         }
 
         private void CancelSave()
         {
-            OnSaveConfirmed?.Invoke(Option<string>.None);
+            OnSaveDialogClosed?.Invoke(Option<string>.None);
             this.Close();
         }
     }

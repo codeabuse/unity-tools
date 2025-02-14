@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Codeabuse.SceneManagement;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -9,6 +10,7 @@ using UnityEngine.UIElements;
 
 namespace Codeabuse.EditorTools
 {
+    [UsedImplicitly]
     public class PlayModeSceneSelectAddon : IToolbarAddonBehaviour
     {
         private const string last_played_setup_id_key = "PlayModeSceneIndex";
@@ -56,9 +58,9 @@ namespace Codeabuse.EditorTools
         {
             _sceneSetups.Clear();
             _sceneSetups.AddRange(EditorBuildSettings.scenes
-                   .Select(ebss => new EditorBuildSceneSetup(ebss)));
+                   .Select(ebss => new BuildSceneSetup(ebss)));
             
-            _sceneSetups.AddRange(SceneSetupManager.GetCompositions());
+            _sceneSetups.AddRange(EditorSceneCompositionManager.GetCompositions());
 
             SubscribeToSetupUpdates();
         }
@@ -76,6 +78,8 @@ namespace Codeabuse.EditorTools
         {
             foreach (var sceneSetup in _sceneSetups)
             {
+                if (sceneSetup is null)
+                    continue;
                 sceneSetup.OnEditorUpdated -= SceneSetupUpdated;
             }
         }
@@ -104,7 +108,7 @@ namespace Codeabuse.EditorTools
             for (var i = _sceneSetups.Count - 1; i >= 0; i--)
             {
                 var setup = _sceneSetups[i];
-                if (setup is EditorBuildSceneSetup)
+                if (setup is BuildSceneSetup)
                     continue;
                 
                 if (!(setup as Object))
@@ -130,6 +134,7 @@ namespace Codeabuse.EditorTools
             _loadButton.clicked += OnLoadButtonClicked;
             _saveSetupButton.clicked += SaveCurrentSetupClicked;
             _sceneSelectDropdown = rootElement.Q<DropdownField>();
+            _sceneSelectDropdown.RegisterCallback<PointerDownEvent>(OnDropdownClicked);
             UpdateDropdownChoices();
             var askToSaveChangesToggle = rootElement.Q<Toggle>();
             askToSaveChangesToggle.RegisterValueChangedCallback(OnSaveChangesToggle);
@@ -147,6 +152,17 @@ namespace Codeabuse.EditorTools
             _rootVisualElement.SetEnabled(!EditorApplication.isPlaying && _sceneSetups.Count > 0);
         }
 
+        private void OnDropdownClicked(PointerDownEvent evt)
+        {
+            if (evt.button is not 1)
+                return;
+
+            if (_sceneSetups.Count > selectedSceneSetupIndex)
+            {
+                EditorGUIUtility.PingObject(_sceneSetups[selectedSceneSetupIndex].GetUnderlyingObject());
+            }
+        }
+
         private void OnSaveChangesToggle(ChangeEvent<bool> evt)
         {
             ProjectPrefs.SetBool(ask_to_save_changes_key, _askToSaveChanges = evt.newValue);
@@ -154,8 +170,6 @@ namespace Codeabuse.EditorTools
 
         private void OnPlayButtonClicked()
         {
-            if (!CheckUnsavedModifications()) 
-                return;
             RememberCurrentSetup();
             _lastPlayedSetup = _sceneSetups[selectedSceneSetupIndex];
             SaveLastPlayedSetup();
@@ -166,7 +180,7 @@ namespace Codeabuse.EditorTools
 
         private void OnLoadButtonClicked()
         {
-            if (!CheckUnsavedModifications())
+            if (!CanLoadSceneSetup())
                 return;
             var index = _sceneSetups.IndexOf(_lastPlayedSetup);
             if (index == -1)
@@ -179,7 +193,7 @@ namespace Codeabuse.EditorTools
         {
             var saveWindow = EditorWindow.GetWindow<SaveSceneSetupModalWindow>(true);
             saveWindow.ShowLoadedScenes(EditorSceneManager.GetSceneManagerSetup().Select(ss => ss.path));
-            saveWindow.OnSaveConfirmed += HandleSaveSceneSetup;
+            saveWindow.OnSaveDialogClosed += HandleSaveSceneSetup;
         }
 
         private void HandleSaveSceneSetup(Option<string> option)
@@ -187,20 +201,18 @@ namespace Codeabuse.EditorTools
             option.Match(
                     name =>
                     {
-                        var setup = SceneSetupManager.GetOrCreate(name);
-                        setup.Save();
-                        UpdateSceneSetups();
-                        UpdateDropdownChoices();
-                        EditorGUIUtility.PingObject(setup as Object);
-                        //Debug.Log($"{name} Saved");
-                    },
-                    ()=>
-                    {
-                        //Debug.Log("Cancelled");
+                        EditorSceneCompositionManager.GetOrCreate(name).Match(
+                                setup =>
+                                {
+                                    setup.Save();
+                                    UpdateSceneSetups();
+                                    UpdateDropdownChoices();
+                                    EditorGUIUtility.PingObject(setup as Object);
+                                });
                     });
         }
 
-        private bool CheckUnsavedModifications()
+        private bool CanLoadSceneSetup()
         {
             if (!_askToSaveChanges)
                 return true;

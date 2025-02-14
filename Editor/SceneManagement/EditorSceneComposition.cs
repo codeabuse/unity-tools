@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Codeabuse.EditorTools;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Pool;
+using Object = UnityEngine.Object;
 
-namespace Codeabuse.EditorTools
+namespace Codeabuse.SceneManagement
 {
     /// <summary>
     /// Manage multi-scene setups with this class. Allows to easily load multiple scenes at once.
@@ -75,6 +80,49 @@ namespace Codeabuse.EditorTools
             EditorUtility.SetDirty(this);
             AssetDatabase.SaveAssetIfDirty(this);
             OnEditorUpdated?.Invoke(this);
+        }
+
+        Object ISceneSetup.GetUnderlyingObject()
+        {
+            return this;
+        }
+
+        [ContextMenu("Create Runtime Composition")]
+        public void CreateRuntimeComposition()
+        {
+            var canCreate = true;
+            var buildSettingsScenes = ListPool<BuildScene>.Get();
+            foreach (var sceneSetup in _sceneSetups)
+            {
+                if (!sceneSetup.IsBuildScene(out var ebss, out var index))
+                {
+                    Debug.Log($"Scene '{sceneSetup.path}' is not added to the Build Settings");
+                    canCreate = false;
+                    continue;
+                }
+                buildSettingsScenes.Add(BuildScene.Create(Path.GetFileNameWithoutExtension(ebss.path),
+                        index, ebss.guid.ToString()));
+            }
+
+            if (!canCreate)
+            {
+                goto release;
+            }
+
+            var path = EditorUtility.SaveFilePanelInProject(
+                    "Save Runtime Composition",
+                    "New Runtime Scene Composition",
+                    "asset",
+                    "");
+            
+            if (string.IsNullOrEmpty(path))
+                goto release;
+            
+            var runtimeComposition = SceneComposition.Create(buildSettingsScenes);
+            AssetDatabase.CreateAsset(runtimeComposition, path);
+            
+            release:
+            ListPool<BuildScene>.Release(buildSettingsScenes);
         }
 
         private void OnDestroy()

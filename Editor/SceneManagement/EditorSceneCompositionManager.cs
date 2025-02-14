@@ -4,17 +4,16 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Codeabuse.EditorTools
+namespace Codeabuse.SceneManagement
 {
     [InitializeOnLoad]
-    public static class SceneSetupManager
+    public static class EditorSceneCompositionManager
     {
-        private const string compositions_relative_folder = "Resources/SceneCompositions";
-        private static string compositions_path;
+        private const string compositions_path = "Editor/Resources/EditorSceneCompositions";
         
         private static Dictionary<string, EditorSceneComposition> _savedCompositions = new();
 
-        static SceneSetupManager()
+        static EditorSceneCompositionManager()
         {
             EditorApplication.update -= OnFirstUpdate;
             EditorApplication.update += OnFirstUpdate;
@@ -28,15 +27,7 @@ namespace Codeabuse.EditorTools
 
         private static void EnsureCompositionsFolderCreated()
         {
-            if (!EditorHelpers.TryGetFirstAssetPath(
-                        $"Script {nameof(SceneSetupManager)}",
-                        out var scriptLocation))
-            {
-                scriptLocation = "Assets/Editor/";
-            }
-            else scriptLocation = scriptLocation.Remove(scriptLocation.LastIndexOf('/'));
-
-            EditorHelpers.EnsureAssetsFolderCreated(compositions_path = $"{scriptLocation}/{compositions_relative_folder}");
+            EditorHelpers.EnsureAssetsFolderCreated(compositions_path);
         }
 
         public static IEnumerable<ISceneSetup> GetCompositions()
@@ -53,7 +44,7 @@ namespace Codeabuse.EditorTools
             _savedCompositions = Resources.LoadAll<EditorSceneComposition>("SceneCompositions").ToDictionary(comp => comp.name);
         }
 
-        public static ISceneSetup GetOrCreate(string name)
+        public static Option<ISceneSetup> GetOrCreate(string name)
         {
             if (_savedCompositions.TryGetValue(name, out var composition))
                 return composition;
@@ -62,12 +53,13 @@ namespace Codeabuse.EditorTools
             try
             {
                 EnsureCompositionsFolderCreated();
-                AssetDatabase.CreateAsset(composition, $"{compositions_path}/{composition.name}.asset");
+                AssetDatabase.CreateAsset(composition, $"Assets/{compositions_path}/{composition.name}.asset");
             }
             catch (Exception e)
             {
-                Debug.LogError($"Unable to create asset for scene composition '{composition.name}' due to following exception:");
+                Debug.LogError($"Unable to create asset for scene composition '{composition.name}' due to the following exception:");
                 Debug.LogException(e);
+                return null;
             }
             _savedCompositions[name] = composition;
             return composition;

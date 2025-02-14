@@ -2,10 +2,11 @@
 using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace Codeabuse.SceneManagement
 {
-    public class EditorBuildSceneSetup : ISceneSetup, IEquatable<EditorBuildSceneSetup>
+    public class BuildSceneSetup : ISceneSetup, IEquatable<BuildSceneSetup>
     {
         public event Action<ISceneSetup> OnEditorUpdated;
         
@@ -19,7 +20,7 @@ namespace Codeabuse.SceneManagement
             set
             {
                 if (_ebss is null)
-                    throw new Exception($"Attempted to rename {nameof(EditorBuildSceneSetup)} with invalid internal {nameof(EditorBuildSettingsScene)}");
+                    throw new Exception($"Attempted to rename {nameof(BuildSceneSetup)} with invalid internal {nameof(EditorBuildSettingsScene)}");
                 _name = null;
                 AssetDatabase.RenameAsset(_ebss.path, value);
             }
@@ -27,7 +28,7 @@ namespace Codeabuse.SceneManagement
 
         public int Id => _ebss.guid.GetHashCode();
 
-        public EditorBuildSceneSetup(EditorBuildSettingsScene editorBuildSettingsScene)
+        public BuildSceneSetup(EditorBuildSettingsScene editorBuildSettingsScene)
         {
             this._ebss = editorBuildSettingsScene;
         }
@@ -37,12 +38,17 @@ namespace Codeabuse.SceneManagement
             //NOP
         }
 
+        Object ISceneSetup.GetUnderlyingObject()
+        {
+            return _ebss is null ? null : AssetDatabase.LoadAssetAtPath<Object>(_ebss.path);
+        }
+
         public void Load()
         {
             EditorSceneManager.OpenScene(_ebss.path);
         }
 
-        public bool Equals(EditorBuildSceneSetup other)
+        public bool Equals(BuildSceneSetup other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -54,7 +60,7 @@ namespace Codeabuse.SceneManagement
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((EditorBuildSceneSetup)obj);
+            return Equals((BuildSceneSetup)obj);
         }
 
         public override int GetHashCode()
