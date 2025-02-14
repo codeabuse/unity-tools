@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 #if UNITASK_ENABLED
@@ -32,7 +34,6 @@ namespace Codeabuse.SceneManagement
         }
 
 #if UNITASK_ENABLED
-
         public async UniTask LoadAsync()
         {
             if (_scenes.Length == 0)
@@ -51,5 +52,12 @@ namespace Codeabuse.SceneManagement
             }
         }
 #endif
+
+        public static SceneComposition Create(IEnumerable<BuildScene> buildScenes)
+        {
+            var composition = CreateInstance<SceneComposition>();
+            composition._scenes = buildScenes.ToArray();
+            return composition;
+        }
     }
 }
