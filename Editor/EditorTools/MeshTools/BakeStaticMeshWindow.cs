@@ -10,7 +10,7 @@ namespace Codeabuse.EditorTools
         private SkinnedMeshRenderer _targetSkinnedMeshRenderer;
         private Button _bakeButton;
 
-        [MenuItem("Tools/Open Skinned Mesh Baking Window")]
+        [MenuItem("Window/Skinned Mesh Baking")]
         private static void ShowWindow()
         {
             var window = GetWindow<BakeStaticMeshWindow>();
