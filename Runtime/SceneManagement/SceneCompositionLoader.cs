@@ -2,7 +2,6 @@
 #if INPUT_SYSTEM_ENABLED
 using UnityEngine.InputSystem;
 #endif
-using UnityEngine.Serialization;
 
 namespace Codeabuse.SceneManagement
 {
@@ -13,7 +12,6 @@ namespace Codeabuse.SceneManagement
         private InputActionProperty _resetAction;
 #endif
 
-        [FormerlySerializedAs("_currentComposition")]
         [SerializeField]
         private SceneComposition _firstComposition;
         
@@ -25,7 +23,8 @@ namespace Codeabuse.SceneManagement
 
         private void Start()
         {
-            _firstComposition.Load();
+            if (_firstComposition)
+                _firstComposition.Load();
         }
 
         private void OnEnable()
