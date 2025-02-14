@@ -6,6 +6,7 @@ namespace Codeabuse
     /// Represents optional result, useful to replace null return type or nullable value types,
     /// providing safe execution path when no value has been returned.
     /// Can be used in combination with Result.
+    /// <value>null</value> is usually implicitly converted into <value>Option.None</value>
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
     public readonly struct Option<TValue>
