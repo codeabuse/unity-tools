@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Codeabuse
@@ -15,7 +14,6 @@ namespace Codeabuse
         }
 
         public void Invoke(object value) => _action.Invoke(value);
-        //public static implicit operator DelegateWrapper(Action<object> action) => new(action);
     }
 
     public class DelegateWrapper<T> : DelegateWrapper, IEquatable<DelegateWrapper<T>>
