@@ -18,9 +18,9 @@ namespace Codeabuse.SceneManagement
                     ebss => Path.GetFileNameWithoutExtension(ebss.path)));
             
             dropdown.choices = choices;
-            var nameProperty = property.FindPropertyRelative("_name");
-            var indexProperty = property.FindPropertyRelative("_buildId");
-            var guidProperty = property.FindPropertyRelative("_guid");
+            var nameProperty = property.FindPropertyRelative(BuildScene.NAME_PROPERTY);
+            var indexProperty = property.FindPropertyRelative(BuildScene.INDEX_PROPERTY);
+            var guidProperty = property.FindPropertyRelative(BuildScene.GUID_PROPERTY);
             
             if (string.IsNullOrEmpty(guidProperty.stringValue))
             {
