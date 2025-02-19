@@ -52,6 +52,7 @@ namespace Codeabuse.EditorTools
         private void OnSceneListChanged()
         {
             UpdateSceneSetups();
+            UpdateDropdownChoices();
         }
 
         private void UpdateSceneSetups()
@@ -93,8 +94,7 @@ namespace Codeabuse.EditorTools
                 return;
             }
             
-            if (_sceneSetups.Contains(sceneSetup))
-                UpdateDropdownChoices();
+            UpdateDropdownChoices();
         }
 
         private void UpdateDropdownChoices()
