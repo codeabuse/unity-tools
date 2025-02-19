@@ -39,6 +39,7 @@ namespace Codeabuse.SceneManagement
             {
                 sceneSetup.UpdateGUID();
             }
+            EditorSceneCompositionManager.Register(this);
         }
 
         [ContextMenu("Load")]
@@ -118,8 +119,15 @@ namespace Codeabuse.SceneManagement
             if (string.IsNullOrEmpty(path))
                 goto release;
             
-            var runtimeComposition = SceneComposition.Create(buildSettingsScenes);
-            AssetDatabase.CreateAsset(runtimeComposition, path);
+            try
+            {
+                var runtimeComposition = SceneComposition.Create(buildSettingsScenes);
+                AssetDatabase.CreateAsset(runtimeComposition, path);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
             
             release:
             ListPool<BuildScene>.Release(buildSettingsScenes);

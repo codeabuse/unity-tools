@@ -64,5 +64,16 @@ namespace Codeabuse.SceneManagement
             _savedCompositions[name] = composition;
             return composition;
         }
+
+        public static void Register(EditorSceneComposition composition)
+        {
+            if (_savedCompositions.TryGetValue(composition.name, out var registeredComposition) &&
+                registeredComposition == composition)
+            {
+                return;
+            }
+            
+            _savedCompositions.Add(composition.name, composition);
+        }
     }
 }
