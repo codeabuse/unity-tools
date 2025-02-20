@@ -13,5 +13,13 @@ namespace Codeabuse.AsyncTools
                     ct, true);
             return eventHandler.OnInvokeAsync();
         }
+        
+        public static UniTask WaitFor<T>(this Action<T> action, CancellationToken ct)
+        {
+            var eventHandler = new EventAsyncHandler<T>(invoke => action += invoke,
+                    invoke => action -= invoke,
+                    ct, true);
+            return eventHandler.OnInvokeAsync();
+        }
     }
 }
