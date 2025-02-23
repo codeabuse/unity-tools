@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
@@ -10,6 +12,7 @@ namespace Codeabuse
     {
         private const string package_id = "net.codeabuse.unity-tools";
         private const string setup_done_key = "setup_done";
+        private const string unitask_dotween_support_symbol = "UNITASK_DOTWEEN_SUPPORT";
 
         private static ListRequest _packagesRequest;
         
@@ -70,7 +73,20 @@ namespace Codeabuse
                         " using Git URL (see https://github.com/Cysharp/UniTask?tab=readme-ov-file#upm-package for instructions).",
                         "Ok");
             }
+#elif DOTWEEN && !UNITASK_DOTWEEN_SUPPORT
+
+            var namedBuildTarget = NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            var symbols = PlayerSettings.GetScriptingDefineSymbols(namedBuildTarget)
+                   .Split(',', ' ')
+                   .ToList();
+            
+            if (string.IsNullOrEmpty(symbols.FirstOrDefault(x => x == unitask_dotween_support_symbol)))
+            {
+                symbols.Add(unitask_dotween_support_symbol);
+                PlayerSettings.SetScriptingDefineSymbols(namedBuildTarget, symbols.ToArray());
+            }
 #endif
+            
         }
     }
 }
