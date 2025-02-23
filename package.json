@@ -1,6 +1,6 @@
 {
   "name": "net.codeabuse.unity-tools",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "displayName": "Unity Tools",
   "description": "Tools and extensions for Unity Editor and application runtime",
   "unity": "2022.3",
