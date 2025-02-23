@@ -61,6 +61,8 @@ namespace Codeabuse
                     PromptUserWithPackageInfo();
                 }
             }
+
+            CheckScriptingDefineSymbols();
         }
 
         private static void PromptUserWithPackageInfo()
@@ -73,7 +75,12 @@ namespace Codeabuse
                         " using Git URL (see https://github.com/Cysharp/UniTask?tab=readme-ov-file#upm-package for instructions).",
                         "Ok");
             }
-#elif DOTWEEN && !UNITASK_DOTWEEN_SUPPORT
+#endif
+        }
+
+        private static void CheckScriptingDefineSymbols()
+        {
+#if UNITASK_ENABLED && DOTWEEN && !UNITASK_DOTWEEN_SUPPORT
 
             var namedBuildTarget = NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
             var symbols = PlayerSettings.GetScriptingDefineSymbols(namedBuildTarget)
@@ -86,7 +93,6 @@ namespace Codeabuse
                 PlayerSettings.SetScriptingDefineSymbols(namedBuildTarget, symbols.ToArray());
             }
 #endif
-            
         }
     }
 }
