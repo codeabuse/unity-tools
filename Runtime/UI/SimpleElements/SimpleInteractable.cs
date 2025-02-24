@@ -126,6 +126,7 @@ namespace Codeabuse.UI
             ApplyTransition(_interactable? UIControlState.Normal : UIControlState.Disabled);
             if (GetComponent<Selectable>() is {} selectable)
             {
+                this.Interactable = selectable.interactable;
                 TrackInteractableState(selectable);
             }
 #if UNITASK_ENABLED
