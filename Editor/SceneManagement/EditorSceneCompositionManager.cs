@@ -41,7 +41,9 @@ namespace Codeabuse.SceneManagement
 
         private static void LoadSceneCompositions()
         {
-            _savedCompositions = Resources.LoadAll<EditorSceneComposition>("SceneCompositions").ToDictionary(comp => comp.name);
+            _savedCompositions = 
+                    Resources.LoadAll<EditorSceneComposition>("")
+                           .ToDictionary(comp => comp.name);
         }
 
         public static Option<ISceneSetup> GetOrCreate(string name)

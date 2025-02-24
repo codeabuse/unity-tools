@@ -120,8 +120,16 @@ namespace Codeabuse.EditorTools
         {
             var enableControl = playModeState is PlayModeStateChange.EnteredEditMode;
             _rootVisualElement.SetEnabled(enableControl);
+            
             if (enableControl && _hasJumpedToPlaymode)
+            {
                 RestorePreviousSetup();
+            }
+
+            if (playModeState is PlayModeStateChange.EnteredEditMode)
+            {
+                UpdateSceneSetups();
+            }
         }
 
         void IToolbarAddonBehaviour.OnCreateGUI(VisualElement rootElement)
