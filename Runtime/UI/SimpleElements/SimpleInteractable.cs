@@ -1,7 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+#if UNITASK_ENABLED
+using System.Threading;
+using Cysharp.Threading.Tasks;
+#endif
 
 namespace Codeabuse.UI
 {
@@ -29,6 +36,10 @@ namespace Codeabuse.UI
         private readonly List<ITransitionHandler> _transitionHandlers = new();
         
         private readonly HashSet<int> _hoveredBy = new();
+        
+#if UNITASK_ENABLED
+        private CancellationTokenSource _trackSelectableCancellation = new();
+#endif
 
         public bool IsHovered => _hoveredBy.Count != 0;
         
@@ -54,6 +65,32 @@ namespace Codeabuse.UI
             _transitionHandlers.AddRange(GetComponents<ITransitionHandler>());
         }
 
+        private void TrackInteractableState(Selectable selectable)
+        {
+            var state = selectable.interactable;
+#if UNITASK_ENABLED
+            UniTask.Create(async (ct) =>
+            {
+                await UniTask.WaitUntil(() => selectable.interactable != state, cancellationToken: ct);
+                this.Interactable = selectable.interactable;
+                TrackInteractableState(selectable);
+            },  this.GetCancellationTokenOnDestroy());
+#else
+            StartCoroutine(TrackInteractableStateCoroutine());
+            
+            IEnumerator TrackInteractableStateCoroutine()
+            {
+                while (this && this.enabled)
+                {
+                    yield return null;
+                    if (selectable.interactable != state)
+                    {
+                        state = this.Interactable = selectable.interactable;
+                    }
+                }
+            }
+#endif
+        }
         public void AddTransitionHandler(ITransitionHandler handler) => _transitionHandlers.Add(handler);
         public void RemoveTransitionHandler(ITransitionHandler handler) => _transitionHandlers.Remove(handler);
 
@@ -87,6 +124,23 @@ namespace Codeabuse.UI
         protected virtual void OnEnable()
         {
             ApplyTransition(_interactable? UIControlState.Normal : UIControlState.Disabled);
+            if (GetComponent<Selectable>() is {} selectable)
+            {
+                TrackInteractableState(selectable);
+            }
+#if UNITASK_ENABLED
+            if (_trackSelectableCancellation.IsCancellationRequested)
+            {
+                _trackSelectableCancellation = new();
+            }
+#endif
+        }
+
+        protected virtual void OnDisable()
+        {
+#if UNITASK_ENABLED
+            _trackSelectableCancellation.Cancel();
+#endif
         }
 
         protected virtual void Update()
