@@ -22,7 +22,7 @@ namespace Codeabuse.AsyncTools
         public EventAsyncHandler(Action<Action> addInvokeDelegate, 
                 Action<Action> removeInvokeDelegate, CancellationToken ct, bool callOnce)
         {
-            this.cancellationToken = cancellationToken;
+            this.cancellationToken = ct;
             if (cancellationToken.IsCancellationRequested)
             {
                 isDisposed = true;
