@@ -235,7 +235,7 @@ namespace Codeabuse.AsyncTools
         
         static void CancellationCallback(object state)
         {
-            var self = (EventAsyncHandler)state;
+            var self = (EventAsyncHandler<T>)state;
             self.Dispose();
         }
         
