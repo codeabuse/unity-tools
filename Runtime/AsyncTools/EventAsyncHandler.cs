@@ -5,6 +5,10 @@ using Cysharp.Threading.Tasks;
 
 namespace Codeabuse.AsyncTools
 {
+    /// <summary>
+    /// Allows to await delegates. Use extension method <see cref="WaitForEvent"/>
+    /// to await events (provide subscribe and unsubscribe delegates as lambdas).
+    /// </summary>
     public class EventAsyncHandler : IUniTaskSource, IAsyncClickEventHandler
     {
         static Action<object> cancellationCallback = CancellationCallback;
@@ -110,9 +114,17 @@ namespace Codeabuse.AsyncTools
             self.Dispose();
         }
 
-        public static UniTask WaitForEvent(Action<Action> subscribe, Action<Action> unsubscribe, CancellationToken token)
+        public static UniTask WaitForEvent(
+                Action<Action> subscribe, 
+                Action<Action> unsubscribe, 
+                CancellationToken cancellationToken)
         {
-            var eventHandler = new EventAsyncHandler(subscribe, unsubscribe, token, true);
+            var eventHandler = new EventAsyncHandler(
+                    subscribe, 
+                    unsubscribe,
+                    cancellationToken, 
+                    true);
+            
             return eventHandler.OnInvokeAsync();
         }
     }
@@ -134,7 +146,7 @@ namespace Codeabuse.AsyncTools
         public EventAsyncHandler(Action<Action<T>> addInvokeDelegate, 
                 Action<Action<T>> removeInvokeDelegate, CancellationToken ct, bool callOnce)
         {
-            this.cancellationToken = cancellationToken;
+            this.cancellationToken = ct;
             if (cancellationToken.IsCancellationRequested)
             {
                 isDisposed = true;
@@ -159,14 +171,14 @@ namespace Codeabuse.AsyncTools
             core.TrySetResult(value);
         }
         
-        public UniTask OnInvokeAsync()
+        public UniTask<T> OnInvokeAsync()
         {
             core.Reset();
             if (isDisposed)
             {
                 core.TrySetCanceled(this.cancellationToken);
             }
-            return new UniTask(this, core.Version);
+            return new UniTask<T>(this, core.Version);
         }
         
         T IUniTaskSource<T>.GetResult(short token)
@@ -227,9 +239,16 @@ namespace Codeabuse.AsyncTools
             self.Dispose();
         }
         
-        public static UniTask WaitForEvent(Action<Action<T>> subscribe, Action<Action<T>> unsubscribe, CancellationToken token)
+        public static UniTask<T> WaitForEvent(
+                Action<Action<T>> subscribe, 
+                Action<Action<T>> unsubscribe,
+                CancellationToken cancellationToken)
         {
-            var eventHandler = new EventAsyncHandler<T>(subscribe, unsubscribe, token, true);
+            var eventHandler = new EventAsyncHandler<T>(
+                    subscribe, 
+                    unsubscribe,
+                    cancellationToken, 
+                    true);
             return eventHandler.OnInvokeAsync();
         }
     }
