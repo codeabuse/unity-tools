@@ -7,13 +7,23 @@ namespace Codeabuse
     public abstract class DelegateWrapper
     {
         protected readonly Action<object> _action;
+        private Action _onInvoke;
 
         protected DelegateWrapper(Action<object> action)
         {
             _action = action;
         }
 
-        public void Invoke(object value) => _action.Invoke(value);
+        public void Invoke(object value)
+        {
+            _action.Invoke(value);
+            _onInvoke?.Invoke();
+        }
+
+        public void OnInvoke(Action callback)
+        {
+            _onInvoke += callback;
+        }
     }
 
     public class DelegateWrapper<T> : DelegateWrapper, IEquatable<DelegateWrapper<T>>
