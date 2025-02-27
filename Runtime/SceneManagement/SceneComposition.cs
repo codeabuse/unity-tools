@@ -15,6 +15,8 @@ namespace Codeabuse.SceneManagement
         [SerializeField]
         private BuildScene[] _scenes;
 
+        public IReadOnlyList<BuildScene> Scenes => _scenes;
+
         public void Load()
         {
             if (_scenes.Length == 0)
