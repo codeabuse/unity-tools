@@ -11,11 +11,12 @@ namespace Codeabuse
         public static IEnumerator Evaluate(Func<Vector3> getter, Action<Vector3> setter, Vector3 target, float duration, Func<float, float> curve)
         {
             var time = 0f;
+            var start = getter();
             while (time < duration)
             {
                 yield return waitForEndOfFrame;
                 time += Time.deltaTime;
-                setter(Vector3.Lerp(getter(), target, curve(time / duration)));
+                setter(Vector3.Lerp(start, target, curve(time / duration)));
             }
 
             setter(target);
@@ -23,11 +24,12 @@ namespace Codeabuse
         public static IEnumerator Evaluate(Func<Color> getter, Action<Color> setter, Color target, float duration, Func<float, float> curve)
         {
             var time = 0f;
+            var start = getter();
             while (time < duration)
             {
                 yield return waitForEndOfFrame;
                 time += Time.deltaTime;
-                setter(Color.Lerp(getter(), target, curve(time / duration)));
+                setter(Color.Lerp(start, target, curve(time / duration)));
             }
 
             setter(target);

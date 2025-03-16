@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITASK_ENABLED
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 
@@ -27,3 +28,4 @@ namespace Codeabuse.AsyncTools
         }
     }
 }
+#endif
