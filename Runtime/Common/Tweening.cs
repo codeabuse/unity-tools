@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITASK_ENABLED
+using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -6,7 +7,6 @@ namespace Codeabuse.AsyncTools
 {
     public static class Tweening
     {
-#if UNITASK_ENABLED
         public static async UniTask Evaluate(Func<Color> getter, Action<Color> setter, Color target, float duration, Func<float, float> curve)
         {
             var time = 0f;
@@ -55,6 +55,6 @@ namespace Codeabuse.AsyncTools
             return Evaluate(getter, setter, target, duration, CurveFunctions.InverseQuintic);
         }
 
-#endif
     }
 }
+#endif
