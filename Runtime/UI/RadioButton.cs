@@ -1,11 +1,15 @@
-﻿using System.Threading;
-using Cysharp.Threading.Tasks;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
+
+#if UNITASK_DOTWEEN_SUPPORT
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
-using UnityEngine.Serialization;
+#endif
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -109,10 +113,15 @@ namespace Codeabuse.UI
         [SerializeField]
         private Image _knobImage;
 
+#if UNITASK_DOTWEEN_SUPPORT
+        
         private TweenerCore<Vector3, Vector3, VectorOptions> _knobTweener;
 
         private CancellationTokenSource _knobMovementCancellation = new();
         private UniTask _moveKnobTask;
+#else
+        private Coroutine _moveKnobCoroutine;        
+#endif
 
         protected override void Awake()
         {
@@ -150,6 +159,7 @@ namespace Codeabuse.UI
                 _highlight.color = isOn ? _activeHighlight : _inactiveHighlight;
                 return;
             }
+#if UNITASK_DOTWEEN_SUPPORT
             if (_moveKnobTask.Status == UniTaskStatus.Pending)
             {
                 _knobMovementCancellation.Cancel();
@@ -157,8 +167,16 @@ namespace Codeabuse.UI
             }
 
             _moveKnobTask = MoveKnobAsync(value ? KnobOnPosition : KnobOffPosition, _knobMovementCancellation.Token);
+#else
+            if (_moveKnobCoroutine is not null)
+            {
+                StopCoroutine(_moveKnobCoroutine);
+            }
+            _moveKnobCoroutine = StartCoroutine(MoveKnob(value ? KnobOnPosition : KnobOffPosition));
+#endif
         }
 
+#if UNITASK_DOTWEEN_SUPPORT
         private async UniTask MoveKnobAsync(Vector3 targetLocalPosition, CancellationToken ct)
         {
             await _knobTransform.DOLocalMove(targetLocalPosition, colors.fadeDuration)
@@ -168,5 +186,17 @@ namespace Codeabuse.UI
                 _highlight.color = isOn ? _activeHighlight : _inactiveHighlight;
             }).ToUniTask(TweenCancelBehaviour.KillAndCancelAwait, cancellationToken: ct);
         }
+        #else
+        private IEnumerator MoveKnob(Vector3 position)
+        {
+            yield return TweeningCoroutines.Quadratic(
+                    () => _knobTransform.localPosition,
+                    pos => _knobTransform.localPosition = pos,
+                    position,
+                    colors.fadeDuration);
+            _highlight.color = isOn ? _activeHighlight : _inactiveHighlight;
+            _moveKnobCoroutine = null;
+        }
+#endif
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITASK_ENABLED
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine.UIElements;
@@ -25,3 +26,4 @@ namespace Codeabuse.AsyncTools
         }
     }
 }
+#endif

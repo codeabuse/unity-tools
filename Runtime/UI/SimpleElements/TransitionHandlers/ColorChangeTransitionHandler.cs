@@ -1,7 +1,10 @@
 ﻿using System.Threading;
+using UnityEngine;
+#if UNITASK_ENABLED
 using Cysharp.Threading.Tasks;
+#endif
+#if DOTWEEN && UNITASK_DOTWEEN_SUPPORT
 using Codeabuse.AsyncTools;
-#if DOTWEEN
 using DG.Tweening;
 #endif
 
@@ -21,11 +24,11 @@ namespace Codeabuse.UI
         {
 #if DOTWEEN && UNITASK_DOTWEEN_SUPPORT
             _transition = DOTween.To(
-                () => TargetGraphic.color, 
-                color => TargetGraphic.color = color,
-                TargetColor,
-                Colors.fadeDuration)
-                .ToUniTask(cancellationToken: _transitionCts.Token);
+                            () => TargetGraphic.color, 
+                            color => TargetGraphic.color = color,
+                            TargetColor,
+                            Colors.fadeDuration)
+                   .ToUniTask(cancellationToken: _transitionCts.Token);
             
 #elif UNITASK_ENABLED
             _transition = Tweening.Linear(
@@ -51,8 +54,10 @@ namespace Codeabuse.UI
 
         private void OnDisable()
         {
+#if UNITASK_ENABLED
             if(_transition.Status == UniTaskStatus.Pending)
                 _transitionCts.Cancel();
+#endif
         }
     }
 }
