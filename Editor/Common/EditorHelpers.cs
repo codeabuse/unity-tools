@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text;
 using UnityEditor;
-using UnityEngine;
 
 namespace Codeabuse
 {
@@ -35,7 +34,6 @@ namespace Codeabuse
                     continue;
                 parent = parentPath.Remove(parentPath.Length -1, 1).ToString();
                 AssetDatabase.CreateFolder(parent, child);
-                Debug.Log($"Folder created: {parentPath}{child}");
             }
 
             return true;
