@@ -2,6 +2,7 @@
 using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Codeabuse.SceneManagement
@@ -45,7 +46,17 @@ namespace Codeabuse.SceneManagement
 
         public void Load()
         {
-            EditorSceneManager.OpenScene(_ebss.path);
+            if (!SceneExists()) 
+                return;
+            EditorSceneManager.OpenScene(AssetDatabase.GUIDToAssetPath(_ebss.guid));
+        }
+
+        private bool SceneExists()
+        {
+            var fullPath = Path.Combine(
+                    Application.dataPath.Remove(Application.dataPath.LastIndexOf('/')), 
+                    AssetDatabase.GUIDToAssetPath(_ebss.guid));
+            return File.Exists(fullPath);
         }
 
         public bool Equals(BuildSceneSetup other)
