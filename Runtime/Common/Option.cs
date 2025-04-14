@@ -15,6 +15,8 @@ namespace Codeabuse
 
         public bool HasValue => _hasValue;
 
+        public TValue Value => _value;
+
         private readonly TValue _value;
         private readonly bool _hasValue;
 
@@ -34,7 +36,7 @@ namespace Codeabuse
         {
             if (_hasValue)
             {
-                some(_value);
+                some(Value);
             }
             else
             {
