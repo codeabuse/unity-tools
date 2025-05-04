@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEditor.Compilation;
+using UnityEngine;
 
 namespace Codeabuse
 {
@@ -9,6 +10,12 @@ namespace Codeabuse
         public static void RequestScriptRecompilation()
         {
             CompilationPipeline.RequestScriptCompilation();
+        }
+
+        [MenuItem("Tools/Reset PlayerPrefs")]
+        public static void ResetPlayerPrefs()
+        {
+            PlayerPrefs.DeleteAll();
         }
     }
 }

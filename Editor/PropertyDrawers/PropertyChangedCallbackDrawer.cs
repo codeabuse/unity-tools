@@ -48,8 +48,8 @@ namespace Codeabuse
         }
 
         /*
-         * The workflow iwthout caching the reflection stuff is highly inefficient in GUI loop.
-         * If one is considered to be really used, its better to get method infos mapped by property has as key
+         * The workflow without caching the reflection stuff is highly inefficient in GUI loop.
+         * If one is considered to be really used, its better to get MethodInfos mapped by property
          * using SerializedPropertyTools
          */
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -57,8 +57,8 @@ namespace Codeabuse
             if (Application.isPlaying)
                 return;
 
-            var propertyMmodified = EditorGUI.PropertyField(position, property, label);
-            if (!propertyMmodified)
+            var propertyModified = EditorGUI.PropertyField(position, property, label);
+            if (!propertyModified)
                 return;
 
             if (!FindCallbackTarget(property,
